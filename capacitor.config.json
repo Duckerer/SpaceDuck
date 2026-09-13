@@ -1,0 +1,9 @@
+{
+  "appId": "com.spaceduck.game",
+  "appName": "SpaceDuck",
+  "webDir": "www",
+  "backgroundColor": "#05060f",
+  "android": {
+    "allowMixedContent": true
+  }
+}

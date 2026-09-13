@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05060f">
+<meta name="mobile-web-app-capable" content="yes">
+<title>SpaceDuck</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <section id="screen-boot" class="screen active">
+    <div class="boot-inner">
+      <div id="boot-duck" class="boot-duck"></div>
+      <div id="boot-hint" class="boot-hint" data-i18n="boot_hold"></div>
+      <div class="boot-bar"><div id="boot-progress"></div></div>
+    </div>
+  </section>
+
+  <section id="screen-menu" class="screen">
+    <div class="menu-logo"></div>
+    <h1 class="menu-title">SpaceDuck</h1>
+    <div class="menu-buttons">
+      <button class="btn big" data-act="play" data-i18n="m_play"></button>
+      <button class="btn big" data-act="ships" data-i18n="m_ships"></button>
+      <button class="btn big" data-act="ach" data-i18n="m_ach"></button>
+      <button class="btn big" data-act="settings" data-i18n="m_settings"></button>
+    </div>
+    <div id="menu-ship-info" class="menu-ship-info"></div>
+  </section>
+
+  <section id="screen-world" class="screen">
+    <h2 class="screen-title" data-i18n="w_title"></h2>
+    <div id="world-list" class="world-list"></div>
+    <button class="btn back top-left" data-act="menu"></button>
+  </section>
+
+  <section id="screen-settings" class="screen">
+    <button class="btn back top-left" data-act="menu"></button>
+    <h2 class="screen-title" data-i18n="s_title"></h2>
+    <div class="setting-row">
+      <label data-i18n="s_lang"></label>
+      <div class="seg" id="set-lang">
+        <button data-v="auto">Auto</button>
+        <button data-v="ru">Русский</button>
+        <button data-v="en">English</button>
+      </div>
+    </div>
+    <div class="setting-row">
+      <label data-i18n="s_volume"></label>
+      <input type="range" id="set-volume" min="0" max="100" step="1">
+    </div>
+    <div class="setting-row">
+      <label data-i18n="s_ui_scale"></label>
+      <input type="range" id="set-uiscale" min="80" max="140" step="5">
+      <span id="set-uiscale-val" class="row-val">100%</span>
+    </div>
+    <div class="setting-row">
+      <button class="btn danger" data-act="reset-stats" data-i18n="s_reset"></button>
+    </div>
+    <div class="confirm-box hidden" id="reset-confirm">
+      <p data-i18n="s_reset_q"></p>
+      <button class="btn danger" data-act="reset-yes" data-i18n="s_reset_yes"></button>
+      <button class="btn" data-act="reset-no" data-i18n="s_reset_no"></button>
+    </div>
+  </section>
+
+  <section id="screen-ships" class="screen">
+    <button class="btn back top-left" data-act="menu"></button>
+    <h2 class="screen-title" data-i18n="sh_title"></h2>
+    <div id="ship-list" class="ship-list"></div>
+    <button class="btn big add" data-act="new-ship" data-i18n="sh_new"></button>
+    <div class="modal hidden" id="ship-edit">
+      <div class="modal-card">
+        <h3 data-i18n="sh_edit"></h3>
+        <label data-i18n="sh_name"></label>
+        <input type="text" id="ship-name" maxlength="18">
+        <label data-i18n="sh_color"></label>
+        <div class="swatches" id="ship-color"></div>
+        <label data-i18n="sh_trail"></label>
+        <div class="swatches" id="ship-trail"></div>
+        <label data-i18n="sh_hull"></label>
+        <div class="seg" id="ship-hull">
+          <button data-v="0">▶</button>
+          <button data-v="1">◆</button>
+          <button data-v="2">◇</button>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" data-act="edit-cancel" data-i18n="sh_cancel"></button>
+          <button class="btn primary" data-act="edit-save" data-i18n="sh_save"></button>
+        </div>
+      </div>
+    </div>
+    <div class="modal hidden" id="ship-detail">
+      <div class="modal-card">
+        <h3 id="det-name"></h3>
+        <div class="det-stats"></div>
+        <div class="det-planets"></div>
+        <div class="modal-actions">
+          <button class="btn" data-act="det-close" data-i18n="sh_close"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-ach" class="screen">
+    <button class="btn back top-left" data-act="menu"></button>
+    <h2 class="screen-title" data-i18n="a_title"></h2>
+    <div class="ach-stats" id="ach-stats"></div>
+    <div id="ach-list" class="ach-list"></div>
+  </section>
+
+  <section id="screen-game" class="screen">
+    <canvas id="cv"></canvas>
+    <div id="hud-left" class="hud-left"></div>
+    <button id="btn-pause" class="hud-btn hud-pause"><svg viewBox="0 0 24 24" width="100%" height="100%"><rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/></svg></button>
+    <button id="btn-auto" class="hud-btn hud-auto">A</button>
+    <div id="hud-hint" class="hud-hint"></div>
+    <div id="hole-warn" class="hole-warn hidden"></div>
+    <div class="modal hidden" id="pause-overlay">
+      <div class="modal-card">
+        <h3 data-i18n="g_paused"></h3>
+        <button class="btn primary" data-act="pause-continue" data-i18n="g_continue"></button>
+        <button class="btn danger" data-act="pause-exit" data-i18n="g_exit"></button>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast" class="toast hidden"></div>
+</div>
+<script src="js/icons.js"></script>
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/world.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
